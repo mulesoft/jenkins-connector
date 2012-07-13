@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:Jenkins-Connector="http://www.mulesoft.org/schema/mule/Jenkins-Connector"
+      xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/Jenkins-Connector http://www.mulesoft.org/schema/mule/Jenkins-Connector/1.0-SNAPSHOT/mule-Jenkins-Connector.xsd">
+
+    <Jenkins-Connector:config jenkinsURL="https://muleion.ci.cloudbees.com" username="dario.carabajal@mulesoft.com" password="Mar03ale"/>
+
+    <flow name="testFlow">
+        <Jenkins-Connector:get-jenkins-node-info />
+    </flow>
+
+    <flow name="testFlowJob">
+        <Jenkins-Connector:get-job-info jobName="ion-console" />
+    </flow>
+
+    <flow name="testFlowBuildWitParams">
+        <Jenkins-Connector:build-with-parameters jobName="cloudhub-deploy" >
+            <Jenkins-Connector:params>
+                <Jenkins-Connector:param key="version">18</Jenkins-Connector:param>
+                <Jenkins-Connector:param key="build">233</Jenkins-Connector:param>
+            </Jenkins-Connector:params>
+        </Jenkins-Connector:build-with-parameters >
+    </flow>
+
+</mule>
