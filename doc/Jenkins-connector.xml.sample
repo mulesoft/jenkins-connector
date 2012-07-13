@@ -1,0 +1,12 @@
+<!-- BEGIN_INCLUDE(jenkins:get-jenkins-node-info) -->
+    <jenkins:get-jenkins-node-info />
+<!-- END_INCLUDE(jenkins:get-jenkins-node-info) -->
+<!-- BEGIN_INCLUDE(jenkins:get-job-info) -->
+    <jenkins:get-job-info jobName="ion-console" />
+<!-- END_INCLUDE(jenkins:get-job-info) -->
+<!-- BEGIN_INCLUDE(jenkins:build) -->
+    <jenkins:build jobName="ion-console" />
+<!-- END_INCLUDE(jenkins:build) -->
+<!-- BEGIN_INCLUDE(jenkins:build-with-parameters) -->
+    <jenkins:build-with-parameters jobName="ion-console" />
+<!-- END_INCLUDE(jenkins:build-with-parameters) -->

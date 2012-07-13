@@ -16,13 +16,15 @@ import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.ConnectionIdentifier;
 import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
+import org.mule.api.ConnectionException;
+
 import org.mule.jenkins.Helper;
 import org.mule.jenkins.JenkinsDeploymentException;
 import org.mule.jenkins.definition.JenkinsInfo;
 import org.mule.jenkins.definition.JobInfo;
+
 
 
 import java.util.Map;
@@ -30,18 +32,10 @@ import java.util.Map;
 /**
  * Provides the ability to interact with Jenkins API REST.
  * <p>
- * Operations allowed:
- * <ul>
- *     <li>Retrieve Jenkins node information</li>
- *     <li>Retrieve Job information by jobName</li>
- *     <li>Perform build</li>
- *     <li>Perform parametrized build</li>
- * </ul>
- *  <p>
  *
  * @author MuleSoft, Inc.
  */
-@Connector( name="Jenkins-Connector", schemaVersion="1.0-SNAPSHOT")
+@Connector( name="jenkins", schemaVersion="1.0")
 public class JenkinsConnector
 {
     /**
@@ -106,7 +100,7 @@ public class JenkinsConnector
     /**
      * Retrieve jenkins server node information
      *
-     * {@sample.xml ../../../doc/JenkinsConnector-connector.xml.sample jenkinsconnector:jenkins-node-info}
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:get-jenkins-node-info}
      *
      * @return Jenkins node info
      */
@@ -119,7 +113,7 @@ public class JenkinsConnector
     /**
      * Retrieves Jenkins job information using job name to find it
      *
-     * {@sample.xml ../../../doc/JenkinsConnector-connector.xml.sample jenkinsconnector:jenkins-job-info}
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:get-job-info}
      *
      * @param jobName Name of the job to retrieve info
      *
@@ -134,7 +128,7 @@ public class JenkinsConnector
     /**
      * Perform a parametrized job build using a map
      *
-     * {@sample.xml ../../../doc/JenkinsConnector-connector.xml.sample jenkinsconnector:jenkins-job-build-with-parameters}
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:build-with-parameters}
      *
      * @param jobName Name of the job to retrieve info
      * @param params Build parameters map
@@ -148,7 +142,7 @@ public class JenkinsConnector
     /**
      * Perform a job build
      *
-     * {@sample.xml ../../../doc/JenkinsConnector-connector.xml.sample jenkinsconnector:jenkins-job-build}
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:build}
      *
      * @param jobName Name of the job to retrieve info
      *
