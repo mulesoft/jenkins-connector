@@ -12,8 +12,9 @@ package org.mule.connector;
 
 import org.mule.api.MuleEvent;
 import org.mule.construct.Flow;
-import org.mule.jenkins.definition.JenkinsInfo;
-import org.mule.jenkins.definition.JobInfo;
+import org.mule.jenkins.model.JenkinsInfo;
+import org.mule.jenkins.model.JenkinsQueueInfo;
+import org.mule.jenkins.model.JobInfo;
 import org.mule.tck.FunctionalTestCase;
 import org.mule.tck.AbstractMuleTestCase;
 
@@ -43,6 +44,12 @@ public class JenkinsConnectorTest extends FunctionalTestCase
     public void testJobBuildWithParams() throws Exception
     {
         runFlowAndExpect("testFlowBuildWitParams", org.mule.transport.NullPayload.class);
+    }
+
+    @Test
+    public void testQueueInfo() throws Exception
+    {
+    runFlowAndExpect("testFlowQueue", JenkinsQueueInfo.class);
     }
 
     /**

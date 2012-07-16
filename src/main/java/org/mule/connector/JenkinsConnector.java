@@ -21,9 +21,11 @@ import org.mule.api.annotations.Processor;
 import org.mule.api.ConnectionException;
 
 import org.mule.jenkins.Helper;
+import org.mule.jenkins.JenkinsConnectorExeption;
 import org.mule.jenkins.JenkinsDeploymentException;
-import org.mule.jenkins.definition.JenkinsInfo;
-import org.mule.jenkins.definition.JobInfo;
+import org.mule.jenkins.model.JenkinsInfo;
+import org.mule.jenkins.model.JenkinsQueueInfo;
+import org.mule.jenkins.model.JobInfo;
 
 
 
@@ -105,7 +107,7 @@ public class JenkinsConnector
      * @return Jenkins node info
      */
     @Processor
-    public JenkinsInfo getJenkinsNodeInfo() throws JenkinsDeploymentException {
+    public JenkinsInfo getJenkinsNodeInfo() throws JenkinsConnectorExeption {
         return Helper.getJenkinsInfo();
 
     }
@@ -120,7 +122,7 @@ public class JenkinsConnector
      * @return Jenkins job info
      */
     @Processor
-    public JobInfo getJobInfo(String jobName) throws JenkinsDeploymentException {
+    public JobInfo getJobInfo(String jobName) throws JenkinsConnectorExeption {
         return Helper.getJenkinsJobInfo(jobName);
 
     }
@@ -150,5 +152,19 @@ public class JenkinsConnector
     @Processor
     public void build(String jobName) throws JenkinsDeploymentException {
         Helper.build(jobName);
+    }
+
+    /**
+     * Retrieves Jenkins Queue information, is the current build activity
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:get-queue-info}
+     *
+     *
+     * @return Jenkins queue job info
+     */
+    @Processor
+    public JenkinsQueueInfo getQueueInfo() throws JenkinsConnectorExeption {
+        return Helper.getQueueInfo();
+
     }
 }

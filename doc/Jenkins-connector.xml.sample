@@ -10,3 +10,6 @@
 <!-- BEGIN_INCLUDE(jenkins:build-with-parameters) -->
     <jenkins:build-with-parameters jobName="ion-console" />
 <!-- END_INCLUDE(jenkins:build-with-parameters) -->
+<!-- BEGIN_INCLUDE(jenkins:get-queue-info) -->
+    <jenkins:get-queue-info />
+<!-- END_INCLUDE(jenkins:get-queue-info) -->

@@ -19,6 +19,10 @@
         <jenkins:get-job-info jobName="ion-console" />
     </flow>
 
+    <flow name="testFlowQueue">
+        <jenkins:get-queue-info />
+    </flow>
+
     <flow name="testFlowBuildWitParams">
         <jenkins:build-with-parameters jobName="cloudhub-deploy" >
             <jenkins:params>
