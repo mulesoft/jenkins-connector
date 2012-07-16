@@ -7,10 +7,9 @@
  * LICENSE.txt file.
  */
 
-package org.mule.jenkins.definition;
+package org.mule.jenkins.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class JenkinsInfo implements Serializable {
     private Object assignedLabels[];

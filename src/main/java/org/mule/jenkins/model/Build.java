@@ -7,21 +7,21 @@
  * LICENSE.txt file.
  */
 
-package org.mule.jenkins.definition;
+package org.mule.jenkins.model;
+
 
 import java.io.Serializable;
 
-public class Project implements Serializable {
-    private String name;
+public class Build implements Serializable {
+    private int number;
     private String url;
-    private String color;
 
-    public String getName() {
-        return name;
+    public int getNumber() {
+        return number;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public String getUrl() {
@@ -30,13 +30,5 @@ public class Project implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 }

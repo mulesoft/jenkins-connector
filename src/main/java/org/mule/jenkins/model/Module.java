@@ -7,7 +7,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.jenkins.definition;
+package org.mule.jenkins.model;
 
 
 import java.io.Serializable;

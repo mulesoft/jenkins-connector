@@ -7,9 +7,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.jenkins.definition;
-
-import sun.security.provider.certpath.BuildStep;
+package org.mule.jenkins.model;
 
 import java.io.Serializable;
 
