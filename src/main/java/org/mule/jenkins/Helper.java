@@ -49,7 +49,6 @@ public class Helper {
 
 
     public static JenkinsInfo getJenkinsInfo() throws JenkinsConnectorExeption {
-        setClientInfo();
         HttpGet method = new HttpGet(getUrl() + "/api/json");
         Gson gson = new Gson();
         JenkinsInfo info = null;
@@ -59,6 +58,7 @@ public class Helper {
             HttpResponse response = client.execute(method, context);
 
             if (response.getStatusLine().getStatusCode() != 200) {
+                EntityUtils.consume(response.getEntity());
                 throw new JenkinsConnectorExeption("Build call failed: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
             }
 
@@ -83,8 +83,6 @@ public class Helper {
         context.setAttribute("preemptive-auth", basicAuth);
 
         client.addRequestInterceptor(new PreemptiveAuth(), 0);
-
-
     }
 
     public static String getUser() {
@@ -133,11 +131,13 @@ public class Helper {
         setUser(username);
         setPassword(password);
         setUrl(jenkinsURL);
+
+        setClientInfo();
+
         connected = true;
     }
 
     public static JobInfo getJenkinsJobInfo(String jobName) throws JenkinsConnectorExeption {
-        setClientInfo();
         HttpGet method = new HttpGet(getUrl() + "/job/" + jobName + "/api/json");
         Gson gson = new Gson();
         JobInfo info = null;
@@ -147,6 +147,7 @@ public class Helper {
             HttpResponse response = client.execute(method, context);
 
             if (response.getStatusLine().getStatusCode() != 200) {
+                EntityUtils.consume(response.getEntity());
                 throw new JenkinsConnectorExeption("Build call failed: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
             }
 
@@ -161,7 +162,6 @@ public class Helper {
     }
 
     public static JenkinsQueueInfo getQueueInfo() throws JenkinsConnectorExeption {
-        setClientInfo();
         HttpGet method = new HttpGet(getUrl() + "/queue/api/json");
         Gson gson = new Gson();
         JenkinsQueueInfo info = null;
@@ -171,6 +171,7 @@ public class Helper {
             HttpResponse response = client.execute(method, context);
 
             if (response.getStatusLine().getStatusCode() != 200) {
+                EntityUtils.consume(response.getEntity());
                 throw new JenkinsConnectorExeption("Build call failed: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
             }
 
@@ -186,7 +187,6 @@ public class Helper {
     }
 
     public static void buildWithParameters(String jobName, Map<String,String> params) throws JenkinsDeploymentException {
-        setClientInfo();
         HttpGet method = new HttpGet(getUrl() + "/job/" + jobName + "/buildWithParameters" + extractParams(params));
 
         try {
@@ -194,9 +194,11 @@ public class Helper {
             HttpResponse response = client.execute(method, context);
 
             if (response.getStatusLine().getStatusCode() != 200) {
+                EntityUtils.consume(response.getEntity());
                 throw new JenkinsDeploymentException("Build call failed: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
             }
 
+            EntityUtils.consume(response.getEntity());
 
         } catch (Exception e) {
             throw new JenkinsDeploymentException(e.getMessage());
@@ -226,8 +228,6 @@ public class Helper {
     }
 
     public static void build(String jobName) throws JenkinsDeploymentException {
-
-        setClientInfo();
         HttpGet method = new HttpGet(getUrl() + "/job/" + jobName + "/build");
 
         try {
@@ -235,9 +235,11 @@ public class Helper {
             HttpResponse response = client.execute(method, context);
 
             if (response.getStatusLine().getStatusCode() != 200) {
+                EntityUtils.consume(response.getEntity());
                 throw new JenkinsDeploymentException("Build call failed: " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
             }
 
+            EntityUtils.consume(response.getEntity());
 
         } catch (Exception e) {
             throw new JenkinsDeploymentException(e.getMessage());
