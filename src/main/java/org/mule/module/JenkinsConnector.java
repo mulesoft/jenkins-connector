@@ -21,8 +21,9 @@ import org.mule.api.annotations.Processor;
 import org.mule.api.ConnectionException;
 
 import org.mule.jenkins.Helper;
-import org.mule.jenkins.JenkinsConnectorExeption;
+import org.mule.jenkins.JenkinsConnectorException;
 import org.mule.jenkins.JenkinsDeploymentException;
+import org.mule.jenkins.model.BuildInfo;
 import org.mule.jenkins.model.JenkinsInfo;
 import org.mule.jenkins.model.JenkinsQueueInfo;
 import org.mule.jenkins.model.JobInfo;
@@ -47,7 +48,19 @@ public class JenkinsConnector
     private String jenkinsURL;
 
     /**
-     * Set property
+     * username
+     */
+    @Configurable
+    private String username;
+
+    /**
+     * password
+     */
+    @Configurable
+    private String password;
+
+    /**
+     * Set jenkins url
      *
      * @param jenkinsURL Jenkins host URL
      */
@@ -58,16 +71,34 @@ public class JenkinsConnector
     }
 
     /**
+     * Set username
+     *
+     * @param username jenkins server user
+     */
+    public void setUsername(String username)
+    {
+        this.username = username;
+
+    }
+    /**
+     * Set password
+     *
+     * @param password Jenkins server password
+     */
+    public void setPassword(String password)
+    {
+        this.password = password;
+
+    }
+    /**
      * Connect
      *
-     * @param username A username
-     * @param password A password
+     * @param connectionName an String identification for the connection
+     *
      * @throws ConnectionException
      */
     @Connect
-    public void connect(@ConnectionKey String username, String password)
-            throws ConnectionException {
-
+    public void connect(@ConnectionKey String connectionName)  throws ConnectionException {
 
         Helper.setConnectionInfo(username, password, jenkinsURL);
 
@@ -107,7 +138,7 @@ public class JenkinsConnector
      * @return Jenkins node info
      */
     @Processor
-    public JenkinsInfo getJenkinsNodeInfo() throws JenkinsConnectorExeption {
+    public JenkinsInfo getJenkinsNodeInfo() throws JenkinsConnectorException {
         return Helper.getJenkinsInfo();
 
     }
@@ -122,7 +153,7 @@ public class JenkinsConnector
      * @return Jenkins job info
      */
     @Processor
-    public JobInfo getJobInfo(String jobName) throws JenkinsConnectorExeption {
+    public JobInfo getJobInfo(String jobName) throws JenkinsConnectorException {
         return Helper.getJenkinsJobInfo(jobName);
 
     }
@@ -163,8 +194,95 @@ public class JenkinsConnector
      * @return Jenkins queue job info
      */
     @Processor
-    public JenkinsQueueInfo getQueueInfo() throws JenkinsConnectorExeption {
+    public JenkinsQueueInfo getQueueInfo() throws JenkinsConnectorException {
         return Helper.getQueueInfo();
 
     }
+
+    /**
+     * Create new job using basic configuration
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:create-job}
+     *
+     * @param jobName Name of the job to create
+     *
+     * @return The created Jenkins job info if exits, an empty object if creation failed
+     */
+    @Processor
+    public JobInfo createJob(String jobName) throws JenkinsConnectorException {
+        return Helper.createJob(jobName);
+
+    }
+
+    /**
+     * Create new job using another job as a copy
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:copy-job}
+     *
+     * @param newJobName Name of the job to create
+     * @param fromJobName Name of the job to copy
+     *
+     * @return The created Jenkins job info if exits, an empty object if creation failed
+     */
+    @Processor
+    public JobInfo copyJob(String newJobName, String fromJobName) throws JenkinsConnectorException {
+        return Helper.copyFromJob(newJobName, fromJobName);
+
+    }
+
+
+    /**
+     * Delete job
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:delete-job}
+     *
+     * @param jobName Name of the job to delete
+     *
+     */
+    @Processor
+    public void deleteJob(String jobName) throws JenkinsConnectorException {
+        Helper.delete(jobName);
+    }
+
+    /**
+    * Enable job
+    *
+    * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:enable-job}
+    *
+    * @param jobName Name of the job to enable
+    *
+    */
+    @Processor
+    public void enableJob(String jobName) throws JenkinsConnectorException {
+        Helper.enableJob(jobName);
+    }
+
+    /**
+     * Disable job
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:disable-job}
+     *
+     * @param jobName Name of the job to disable
+     *
+     */
+    @Processor
+    public void disableJob(String jobName) throws JenkinsConnectorException {
+        Helper.disableJob(jobName);
+    }
+
+    /**
+     * Get job build info
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:get-job-build-info}
+     *
+     * @param jobName Job name
+     * @param buildNumber Build number
+     *
+     * @return Build info representation object
+     */
+    @Processor
+    public BuildInfo getJobBuildInfo(String jobName, int buildNumber) throws JenkinsConnectorException {
+        return Helper.getJobBuildInfo(jobName, buildNumber);
+    }
+
 }

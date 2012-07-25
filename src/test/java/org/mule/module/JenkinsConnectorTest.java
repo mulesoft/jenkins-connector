@@ -12,6 +12,7 @@ package org.mule.module;
 
 import org.mule.api.MuleEvent;
 import org.mule.construct.Flow;
+import org.mule.jenkins.model.BuildInfo;
 import org.mule.jenkins.model.JenkinsInfo;
 import org.mule.jenkins.model.JenkinsQueueInfo;
 import org.mule.jenkins.model.JobInfo;
@@ -35,6 +36,18 @@ public class JenkinsConnectorTest extends FunctionalTestCase
     }
 
     @Test
+    public void testCreateJob() throws Exception
+    {
+        runFlowAndExpect("testCreateNewJob", JobInfo.class);
+    }
+
+    @Test
+    public void testCopyJob() throws Exception
+    {
+        runFlowAndExpect("testCopy", JobInfo.class);
+    }
+
+    @Test
     public void testJobInfo() throws Exception
     {
         runFlowAndExpect("testFlowJob", JobInfo.class);
@@ -52,6 +65,23 @@ public class JenkinsConnectorTest extends FunctionalTestCase
     runFlowAndExpect("testFlowQueue", JenkinsQueueInfo.class);
     }
 
+    @Test
+    public void testEnableDisableJob() throws Exception
+    {
+        runFlowAndExpect("testEnableDisableJob", org.mule.transport.NullPayload.class);
+    }
+
+    @Test
+    public void testDeleteJob() throws Exception
+    {
+        runFlowAndExpect("testDeleteJob", org.mule.transport.NullPayload.class);
+    }
+
+    @Test
+    public void testGetBuildInfo() throws Exception
+    {
+        runFlowAndExpect("testGetBuildInfo", BuildInfo.class);
+    }
     /**
     * Run the flow specified by name and assert equality on the expected output
     *

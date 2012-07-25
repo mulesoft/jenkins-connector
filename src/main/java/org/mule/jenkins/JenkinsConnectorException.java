@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JenkinsConnectorException extends Exception {
-    public JenkinsConnectorException(String s) {
-    }
 
     public static final long serialVersionUID = -1;
 
@@ -25,8 +23,7 @@ public class JenkinsConnectorException extends Exception {
         public String errorContext = null;
         public String errorCode  = null;
         public String errorText  = null;
-        public InfoItem(String contextCode, String errorCode,
-                        String errorText){
+        public InfoItem(String contextCode, String errorCode, String errorText){
 
             this.errorContext = contextCode;
             this.errorCode   = errorCode;
@@ -44,11 +41,9 @@ public class JenkinsConnectorException extends Exception {
         addInfo(errorContext, errorCode, errorMessage);
     }
 
-    public JenkinsConnectorException addInfo(
-            String errorContext, String errorCode, String errorText){
+    public JenkinsConnectorException addInfo(String errorContext, String errorCode, String errorText){
 
-        this.infoItems.add(
-                new InfoItem(errorContext, errorCode, errorText));
+        this.infoItems.add( new InfoItem(errorContext, errorCode, errorText));
         return this;
     }
 
@@ -56,8 +51,7 @@ public class JenkinsConnectorException extends Exception {
         StringBuilder builder = new StringBuilder();
 
         for(int i = this.infoItems.size()-1 ; i >=0; i--){
-            InfoItem info =
-                    this.infoItems.get(i);
+            InfoItem info = this.infoItems.get(i);
             builder.append('[');
             builder.append(info.errorContext);
             builder.append(':');
@@ -74,11 +68,9 @@ public class JenkinsConnectorException extends Exception {
         builder.append(getCode());
         builder.append('\n');
 
-
         //append additional context information.
         for(int i = this.infoItems.size()-1 ; i >=0; i--){
-            InfoItem info =
-                    this.infoItems.get(i);
+            InfoItem info = this.infoItems.get(i);
             builder.append('[');
             builder.append(info.errorContext);
             builder.append(':');
@@ -102,8 +94,7 @@ public class JenkinsConnectorException extends Exception {
         return builder.toString();
     }
 
-    private void appendException(
-            StringBuilder builder, Throwable throwable){
+    private void appendException(StringBuilder builder, Throwable throwable){
         if(throwable == null) return;
         appendException(builder, throwable.getCause());
         builder.append(throwable.toString());
