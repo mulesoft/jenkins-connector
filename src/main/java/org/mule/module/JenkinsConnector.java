@@ -20,6 +20,7 @@ import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
 import org.mule.api.ConnectionException;
 
+import org.mule.api.annotations.param.Optional;
 import org.mule.jenkins.Helper;
 import org.mule.jenkins.JenkinsConnectorException;
 import org.mule.jenkins.JenkinsDeploymentException;
@@ -51,12 +52,14 @@ public class JenkinsConnector
      * username
      */
     @Configurable
+    @Optional
     private String username;
 
     /**
      * password
      */
     @Configurable
+    @Optional
     private String password;
 
     /**
