@@ -36,3 +36,6 @@
 <!-- BEGIN_INCLUDE(jenkins:copy-job) -->
     <jenkins:copy-job newJobName="JobName" fromJobName="OtherJobName"/>
 <!-- END_INCLUDE(jenkins:copy-job) -->
+<!-- BEGIN_INCLUDE(jenkins:get-job-build-log) -->
+    <jenkins:get-job-build-log jobName="JobName" buildNumber="1"/>
+<!-- END_INCLUDE(jenkins:get-job-build-log) -->

@@ -82,6 +82,13 @@ public class JenkinsConnectorTest extends FunctionalTestCase
     {
         runFlowAndExpect("testGetBuildInfo", BuildInfo.class);
     }
+
+    @Test
+    public void testGetLog() throws Exception
+    {
+        runFlowAndExpect("testGetLog", String.class);
+    }
+
     /**
     * Run the flow specified by name and assert equality on the expected output
     *

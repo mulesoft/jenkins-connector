@@ -288,4 +288,18 @@ public class JenkinsConnector
         return Helper.getJobBuildInfo(jobName, buildNumber);
     }
 
+    /**
+     * Get job build console log text
+     *
+     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:get-job-build-log}
+     *
+     * @param jobName Job name
+     * @param buildNumber Build number
+     *
+     * @return String with the log output for the requested Job
+     */
+    @Processor
+    public String getJobBuildLog(String jobName, String buildNumber) throws JenkinsConnectorException {
+        return Helper.getJobBuildLog(jobName, buildNumber);
+    }
 }

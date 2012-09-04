@@ -344,7 +344,7 @@ public class Helper {
             }
 
             String jsonString = EntityUtils.toString(response.getEntity());
-
+            method.abort();
             info = gson.fromJson(jsonString, BuildInfo.class);
 
         } catch (Exception e) {
@@ -379,6 +379,32 @@ public class Helper {
         }
 
         return rJobInfo;
+    }
+
+    public static String getJobBuildLog(String jobName, String buildNumber) throws JenkinsConnectorException {
+        HttpGet method = new HttpGet(getUrl() + "/job/" + jobName + "/" + buildNumber + "/consoleText");
+        String log = "";
+
+        try {
+            // Execute the method.
+            HttpResponse response = client.execute(method, context);
+
+            if (response.getStatusLine().getStatusCode() != 200) {
+                EntityUtils.consume(response.getEntity());
+                throw new JenkinsConnectorException("getJobBuildLog response status error","", response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+            }
+
+            log = EntityUtils.toString(response.getEntity());
+
+            method.abort();
+
+
+        } catch (Exception e) {
+            throw new JenkinsConnectorException("getJobBuildLog http request failed", "", "", e);
+        }
+
+        return log;
+
     }
 
     /**

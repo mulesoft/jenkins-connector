@@ -53,4 +53,8 @@
         <jenkins:copy-job newJobName="CopiedJob" fromJobName="Test-Job"/>
     </flow>
 
+    <flow name="testGetLog">
+        <jenkins:get-job-build-log jobName="Test-Job" buildNumber="3" />
+    </flow>
+
 </mule>
