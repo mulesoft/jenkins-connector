@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * @author MuleSoft, Inc.
  */
-@Connector( name="jenkins", schemaVersion="1.0")
+@Connector( name="jenkins", schemaVersion="1.0", friendlyName = "Jenkins")
 public class JenkinsConnector
 {
     /**
@@ -139,6 +139,7 @@ public class JenkinsConnector
      * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:get-jenkins-node-info}
      *
      * @return Jenkins node info
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public JenkinsInfo getJenkinsNodeInfo() throws JenkinsConnectorException {
@@ -154,6 +155,7 @@ public class JenkinsConnector
      * @param jobName Name of the job to retrieve info
      *
      * @return Jenkins job info
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public JobInfo getJobInfo(String jobName) throws JenkinsConnectorException {
@@ -168,6 +170,7 @@ public class JenkinsConnector
      *
      * @param jobName Name of the job to retrieve info
      * @param params Build parameters map
+     * @throws JenkinsDeploymentException exception
      *
      */
     @Processor
@@ -181,6 +184,7 @@ public class JenkinsConnector
      * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:build}
      *
      * @param jobName Name of the job to retrieve info
+     * @throws JenkinsDeploymentException exception
      *
      */
     @Processor
@@ -195,6 +199,7 @@ public class JenkinsConnector
      *
      *
      * @return Jenkins queue job info
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public JenkinsQueueInfo getQueueInfo() throws JenkinsConnectorException {
@@ -210,6 +215,7 @@ public class JenkinsConnector
      * @param jobName Name of the job to create
      *
      * @return The created Jenkins job info if exits, an empty object if creation failed
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public JobInfo createJob(String jobName) throws JenkinsConnectorException {
@@ -226,6 +232,7 @@ public class JenkinsConnector
      * @param fromJobName Name of the job to copy
      *
      * @return The created Jenkins job info if exits, an empty object if creation failed
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public JobInfo copyJob(String newJobName, String fromJobName) throws JenkinsConnectorException {
@@ -240,6 +247,7 @@ public class JenkinsConnector
      * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:delete-job}
      *
      * @param jobName Name of the job to delete
+     * @throws JenkinsConnectorException exception
      *
      */
     @Processor
@@ -253,6 +261,7 @@ public class JenkinsConnector
     * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:enable-job}
     *
     * @param jobName Name of the job to enable
+    * @throws JenkinsConnectorException exception
     *
     */
     @Processor
@@ -266,6 +275,7 @@ public class JenkinsConnector
      * {@sample.xml ../../../doc/Jenkins-connector.xml.sample jenkins:disable-job}
      *
      * @param jobName Name of the job to disable
+     * @throws JenkinsConnectorException exception
      *
      */
     @Processor
@@ -282,6 +292,7 @@ public class JenkinsConnector
      * @param buildNumber Build number
      *
      * @return Build info representation object
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public BuildInfo getJobBuildInfo(String jobName, int buildNumber) throws JenkinsConnectorException {
@@ -297,9 +308,22 @@ public class JenkinsConnector
      * @param buildNumber Build number
      *
      * @return String with the log output for the requested Job
+     * @throws JenkinsConnectorException exception
      */
     @Processor
     public String getJobBuildLog(String jobName, String buildNumber) throws JenkinsConnectorException {
         return Helper.getJobBuildLog(jobName, buildNumber);
+    }
+
+    public String getJenkinsURL() {
+        return jenkinsURL;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
