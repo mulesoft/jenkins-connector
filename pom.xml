@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mulesoft</groupId>
-    <artifactId>jenkins-connector</artifactId>
+    <artifactId>mule-module-jenkins</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>mule-module</packaging>
-    <name>Mule Cloud Connector</name>
+    <name>Mule Jenkins Connector</name>
 
     <parent>
         <groupId>org.mule.tools.devkit</groupId>
         <artifactId>mule-devkit-parent</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
     </parent>
 
     <properties>

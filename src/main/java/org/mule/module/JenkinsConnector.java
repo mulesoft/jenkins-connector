@@ -15,8 +15,8 @@ import org.mule.api.annotations.Connect;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.ConnectionIdentifier;
 import org.mule.api.annotations.Disconnect;
+import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.api.annotations.Configurable;
 import org.mule.api.annotations.Processor;
 import org.mule.api.ConnectionException;
 
@@ -43,67 +43,19 @@ import java.util.Map;
 public class JenkinsConnector
 {
     /**
-     * This is the Jenkins server URL
-     */
-    @Configurable
-    private String jenkinsURL;
-
-    /**
-     * username
-     */
-    @Configurable
-    @Optional
-    private String username;
-
-    /**
-     * password
-     */
-    @Configurable
-    @Optional
-    private String password;
-
-    /**
-     * Set jenkins url
-     *
-     * @param jenkinsURL Jenkins host URL
-     */
-    public void setJenkinsURL(String jenkinsURL)
-    {
-        this.jenkinsURL = jenkinsURL;
-
-    }
-
-    /**
-     * Set username
-     *
-     * @param username jenkins server user
-     */
-    public void setUsername(String username)
-    {
-        this.username = username;
-
-    }
-    /**
-     * Set password
-     *
-     * @param password Jenkins server password
-     */
-    public void setPassword(String password)
-    {
-        this.password = password;
-
-    }
-    /**
      * Connect
      *
-     * @param connectionName an String identification for the connection
+     * @param connectionName a String identification for the connection
+     * @param jenkinsUrl a Jenkins server URL 
+     * @param username Optional
+     * @param password Optional
      *
      * @throws ConnectionException
      */
     @Connect
-    public void connect(@ConnectionKey String connectionName)  throws ConnectionException {
+    public void connect(@ConnectionKey String connectionName, String jenkinsUrl, @Optional String username, @Password @Optional String password )  throws ConnectionException {
 
-        Helper.setConnectionInfo(username, password, jenkinsURL);
+        Helper.setConnectionInfo(username, password, jenkinsUrl);
 
     }
 
@@ -130,7 +82,7 @@ public class JenkinsConnector
      */
     @ConnectionIdentifier
     public String connectionId() {
-        return "001";
+        return Helper.getUser();
     }
 
     /**
@@ -313,17 +265,5 @@ public class JenkinsConnector
     @Processor
     public String getJobBuildLog(String jobName, String buildNumber) throws JenkinsConnectorException {
         return Helper.getJobBuildLog(jobName, buildNumber);
-    }
-
-    public String getJenkinsURL() {
-        return jenkinsURL;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }
