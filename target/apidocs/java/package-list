@@ -1,0 +1,10 @@
+org.mule.jenkins
+org.mule.jenkins.model
+org.mule.module
+org.mule.module.adapters
+org.mule.module.agents
+org.mule.module.config
+org.mule.module.connectivity
+org.mule.module.process
+org.mule.module.processors
+

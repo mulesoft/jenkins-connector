@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes" xmlns:mule="http://www.mulesoft.org/schema/mule/core" prefix="jenkins" url="http://www.mulesoft.org/schema/mule/jenkins">
+  <global-cloud-connector extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="" localId="parentConfig" icon="" description="" caption="Jenkins"></global-cloud-connector>
+  <nested abstract="true" localId="connection-pooling-profile" description="" caption="">
+    <label description="" caption="Define connection pool configuration" name="poolingProfileLabel"></label>
+    <integer step="0" min="0" defaultValue="5" fillLine="true" description="Controls the maximum number of connections that can be borrowed from the pool at one time. When set to a negative value, there is no limit to the number of connections that may be active at one time. When maxActive is exceeded, the pool is said to be exhausted." caption="Max active" name="maxActive"></integer>
+    <integer step="0" min="0" defaultValue="5" fillLine="true" description="Controls the maximum number of connections that can sit idle in the pool at any time. When set to a negative value, there is no limit to the number of connections that may be idle at one time." caption="Max idle" name="maxIdle"></integer>
+    <enum defaultValue="INITIALISE_ONE" alwaysFill="true" description="Determines how connections in a pool should be initialized. The possible values are: INITIALISE_NONE (will not load any connection into the pool on startup), INITIALISE_ONE (will load one initial connection into the pool on startup), or INITIALISE_ALL (will load all connections in the pool on startup)" caption="Initialisation policy" name="initialisationPolicy">
+      <option value="INITIALISE_NONE"></option>
+      <option value="INITIALISE_ONE"></option>
+      <option value="INITIALISE_ALL"></option>
+    </enum>
+    <enum defaultValue="WHEN_EXHAUSTED_GROW" alwaysFill="true" description="Specifies the behavior of the connection pool when the pool is exhausted. Possible values are: &quot;WHEN_EXHAUSTED_FAIL&quot;, which will throw a NoSuchElementException, &quot;WHEN_EXHAUSTED_WAIT&quot;, which will block by invoking Object.wait(long) until a new or idle object is available, or WHEN_EXHAUSTED_GROW, which will create a new connection and return it, essentially making maxActive meaningless. If a positive maxWait value is supplied, it will block for at most that many milliseconds, after which a NoSuchElementException will be thrown. If maxThreadWait is a negative value, it will block indefinitely." caption="Exhausted action" name="exhaustedAction">
+      <option value="WHEN_EXHAUSTED_WAIT"></option>
+      <option value="WHEN_EXHAUSTED_FAIL"></option>
+      <option value="WHEN_EXHAUSTED_GROW"></option>
+    </enum>
+  </nested>
+  <nested abstract="true" localId="reconnectionStrategyElement" description="" caption="">
+    <label description="" caption="Define how mule should attempt to handle a connection failure" name="connectionLabel"></label>
+    <radioBoolean fillLine="true" description="Disable reconection strategy" caption="Do not use a Reconnection strategy" name="noReconnection"></radioBoolean>
+    <radioBoolean fillLine="true" description="A reconnection strategy that allows the user to configure how many times a reconnection should be attempted and how long to wait between attempts." caption="Standard Reconnection" name="standardReconnection"></radioBoolean>
+    <integer step="1" max="2147483647" min="1" defaultValue="2000" indented="true" controlled="standardReconnection" description="How often (in ms) to reconnect" caption="Frequency (ms)" name="reconnectionFrequency"></integer>
+    <integer step="1" max="2147483647" min="1" defaultValue="2" indented="true" controlled="standardReconnection,!reconnectForever" description="How many reconnection attempts to make" caption="Reconnection Attempts" name="reconnectionAttemps"></integer>
+    <boolean indented="true" controlled="standardReconnection" description="A reconnection strategy that retries an infinite number of times at the specified frequency." caption="Reconnect Forever" name="reconnectForever"></boolean>
+    <radioBoolean fillLine="true" description="A user-defined reconnection strategy." caption="Custom Reconnection" name="customReconnection"></radioBoolean>
+    <classname indented="true" controlled="customReconnection" description="A class that implements the RetryPolicyTemplate interface." caption="Class" name="class"></classname>
+    <childElement allowMultiple="true" controlled="customReconnection" description="Property elements." caption="Properties" name="http://www.springframework.org/schema/beans/property"></childElement>
+  </nested>
+  <global-cloud-connector extends="http://www.mulesoft.org/schema/mule/jenkins/parentConfig" abstract="false" image="icons/large/jenkins-connector-48x32.png" localId="config" icon="icons/small/jenkins-connector-24x16.png" description="Global Jenkins configuration information." caption="Jenkins">
+    <attribute-category description="Jenkins configuration properties." caption="General">
+      <group caption="Generic" id="jenkinsGenericProperties">
+        <name required="true" description="Give a name to this configuration so it can be later referenced by config-ref." caption="Name" name="name"></name>
+      </group>
+      <group caption="Connection" id="connection">
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+    <attribute-category description="Pooling profile options." caption="Pooling Profile">
+      <group caption="Pooling Profile" id="poolingProfile">
+        <childElement inplace="true" description="" caption="" name="http://www.mulesoft.org/schema/mule/jenkins/connection-pooling-profile"></childElement>
+      </group>
+    </attribute-category>
+    <attribute-category description="Reconnection options." caption="Reconnection">
+      <group caption="Strategies" id="reconnectionStrategies">
+        <childElement inplace="true" valuePersistence="org.mule.tooling.ui.modules.core.widgets.meta.HTTPTransactionValuePersistence" description="" caption="" name="http://www.mulesoft.org/schema/mule/core/reconnectionStrategyElement"></childElement>
+        <childElement allowedSubTypes="http://www.mulesoft.org/schema/mule/core/reconnect,http://www.mulesoft.org/schema/mule/core/reconnect-custom-strategy,http://www.mulesoft.org/schema/mule/core/reconnect-forever" allowSubTypes="true" visibleInDialog="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/core/abstractReconnectionStrategy"></childElement>
+      </group>
+    </attribute-category>
+  </global-cloud-connector>
+  <cloud-connector abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="abstractJenkinsConnectorGeneric" icon="icons/small/jenkins-connector-24x16.png" description="Interact with Jenkins." caption="Abstractjenkinsconnectorgeneric">
+    <attribute-category description="General." caption="General">
+      <group caption="Generic" id="abstractJenkinsConnectorGeneric">
+        <globalRef requiredType="http://www.mulesoft.org/schema/mule/jenkins/config" required="true" description="Specify which configuration to use for this invocation." caption="Config Reference" name="config-ref"></globalRef>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" image="icons/large/jenkins-connector-48x32.png" localId="jenkins-connector" icon="icons/small/jenkins-connector-24x16.png" description="Provides the ability to interact with Jenkins API REST.
+." caption="Jenkins" aliasId="org.mule.tooling.ui.modules.core.pattern.jenkins">
+    <attribute-category description="General." caption="General">
+      <group caption="Generic" id="jenkinsConnectorGeneric">
+        <modeSwitch alwaysCombo="true" description="Operation." caption="Operation" name="Jenkins operations to execute">
+          <mode modeLabel="Build" modeId="http://www.mulesoft.org/schema/mule/jenkins/build"></mode>
+          <mode modeLabel="Build with parameters" modeId="http://www.mulesoft.org/schema/mule/jenkins/build-with-parameters"></mode>
+          <mode modeLabel="Copy job" modeId="http://www.mulesoft.org/schema/mule/jenkins/copy-job"></mode>
+          <mode modeLabel="Create job" modeId="http://www.mulesoft.org/schema/mule/jenkins/create-job"></mode>
+          <mode modeLabel="Delete job" modeId="http://www.mulesoft.org/schema/mule/jenkins/delete-job"></mode>
+          <mode modeLabel="Disable job" modeId="http://www.mulesoft.org/schema/mule/jenkins/disable-job"></mode>
+          <mode modeLabel="Enable job" modeId="http://www.mulesoft.org/schema/mule/jenkins/enable-job"></mode>
+          <mode modeLabel="Get jenkins node info" modeId="http://www.mulesoft.org/schema/mule/jenkins/get-jenkins-node-info"></mode>
+          <mode modeLabel="Get job build info" modeId="http://www.mulesoft.org/schema/mule/jenkins/get-job-build-info"></mode>
+          <mode modeLabel="Get job build log" modeId="http://www.mulesoft.org/schema/mule/jenkins/get-job-build-log"></mode>
+          <mode modeLabel="Get job info" modeId="http://www.mulesoft.org/schema/mule/jenkins/get-job-info"></mode>
+          <mode modeLabel="Get queue info" modeId="http://www.mulesoft.org/schema/mule/jenkins/get-queue-info"></mode>
+        </modeSwitch>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="void" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="build" icon="icons/small/jenkins-connector-24x16.png" caption="Build">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to retrieve info." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="void" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="build-with-parameters" icon="icons/small/jenkins-connector-24x16.png" caption="Build With Parameters">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to retrieve info." caption="Job Name" name="jobName"></string>
+        <string-map mapName="params" itemName="param" localName="build-with-parameters-params" javaType="java.util.Map&lt;java.lang.String,java.lang.String&gt;" required="true" description="Build parameters map." caption="Params"></string-map>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="org.mule.jenkins.model.JobInfo" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="copy-job" icon="icons/small/jenkins-connector-24x16.png" caption="Copy Job">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to copy." caption="From Job Name" name="fromJobName"></string>
+        <string javaType="java.lang.String" required="true" description="Name of the job to create." caption="New Job Name" name="newJobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="org.mule.jenkins.model.JobInfo" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="create-job" icon="icons/small/jenkins-connector-24x16.png" caption="Create Job">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to create." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="void" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="delete-job" icon="icons/small/jenkins-connector-24x16.png" caption="Delete Job">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to delete." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="void" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="disable-job" icon="icons/small/jenkins-connector-24x16.png" caption="Disable Job">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to disable." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="void" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="enable-job" icon="icons/small/jenkins-connector-24x16.png" caption="Enable Job">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to enable." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="org.mule.jenkins.model.JenkinsInfo" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="get-jenkins-node-info" icon="icons/small/jenkins-connector-24x16.png" caption="Get Jenkins Node Info">
+    <attribute-category description="General." caption="General"></attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="org.mule.jenkins.model.BuildInfo" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="get-job-build-info" icon="icons/small/jenkins-connector-24x16.png" caption="Get Job Build Info">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Job name." caption="Job Name" name="jobName"></string>
+        <integer step="1" min="0" javaType="int" required="true" description="Build number." caption="Build Number" name="buildNumber"></integer>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="java.lang.String" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="get-job-build-log" icon="icons/small/jenkins-connector-24x16.png" caption="Get Job Build Log">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Build number." caption="Build Number" name="buildNumber"></string>
+        <string javaType="java.lang.String" required="true" description="Job name." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="org.mule.jenkins.model.JobInfo" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="get-job-info" icon="icons/small/jenkins-connector-24x16.png" caption="Get Job Info">
+    <attribute-category description="General." caption="General">
+      <group caption="General" id="general">
+        <string javaType="java.lang.String" required="true" description="Name of the job to retrieve info." caption="Job Name" name="jobName"></string>
+      </group>
+    </attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+  <cloud-connector returnType="org.mule.jenkins.model.JenkinsQueueInfo" extends="http://www.mulesoft.org/schema/mule/jenkins/abstractJenkinsConnectorGeneric" abstract="true" image="icons/large/jenkins-connector-48x32.png" localId="get-queue-info" icon="icons/small/jenkins-connector-24x16.png" caption="Get Queue Info">
+    <attribute-category description="General." caption="General"></attribute-category>
+    <attribute-category description="Connection." caption="Connection">
+      <group caption="Connection" id="connection">
+        <label caption="Use these fields to override the credentials defined in the Jenkins connector."></label>
+        <label caption=""></label>
+        <string javaType="java.lang.String" required="false" description="A String identification for the connection." caption="Connection Name" name="connectionName"></string>
+        <string javaType="java.lang.String" required="false" description="A Jenkins server URL." caption="Jenkins Url" name="jenkinsUrl"></string>
+        <string javaType="java.lang.String" required="false" description="Optional." caption="Username" name="username"></string>
+        <password javaType="java.lang.String" required="false" description="Optional." caption="Password" name="password"></password>
+      </group>
+    </attribute-category>
+  </cloud-connector>
+</namespace>
