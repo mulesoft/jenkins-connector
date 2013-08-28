@@ -4,3 +4,4 @@
 target/*
 .idea/*
 jenkins-connector.iml
+/target

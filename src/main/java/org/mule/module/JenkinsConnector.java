@@ -10,16 +10,18 @@
  */
 package org.mule.module;
 
-import org.mule.api.annotations.Connector;
+import java.util.Map;
+
+import org.mule.api.ConnectionException;
+import org.mule.api.ConnectionExceptionCode;
 import org.mule.api.annotations.Connect;
-import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.ConnectionIdentifier;
+import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.Disconnect;
+import org.mule.api.annotations.Processor;
+import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.api.annotations.Processor;
-import org.mule.api.ConnectionException;
-
 import org.mule.api.annotations.param.Optional;
 import org.mule.jenkins.Helper;
 import org.mule.jenkins.JenkinsConnectorException;
@@ -28,10 +30,6 @@ import org.mule.jenkins.model.BuildInfo;
 import org.mule.jenkins.model.JenkinsInfo;
 import org.mule.jenkins.model.JenkinsQueueInfo;
 import org.mule.jenkins.model.JobInfo;
-
-
-
-import java.util.Map;
 
 /**
  * Provides the ability to interact with Jenkins API REST.
@@ -42,21 +40,30 @@ import java.util.Map;
 @Connector( name="jenkins", schemaVersion="1.0", friendlyName = "Jenkins")
 public class JenkinsConnector
 {
-    /**
+    private Helper helper;
+
+	/**
      * Connect
      *
      * @param connectionName a String identification for the connection
-     * @param jenkinsUrl a Jenkins server URL 
-     * @param username Optional
-     * @param password Optional
-     *
+     * @param jenkinsURL a Jenkins server URL 
+     * @param username The jenkins username.
+     * @param password The jenkins password.
      * @throws ConnectionException
      */
     @Connect
-    public void connect(@ConnectionKey String connectionName, String jenkinsUrl, @Optional String username, @Password @Optional String password )  throws ConnectionException {
-
-        Helper.setConnectionInfo(username, password, jenkinsUrl);
-
+    public void connect(@Optional @Deprecated String connectionName, 
+    		@ConnectionKey String jenkinsURL, 
+    		@Optional String username, 
+    		@Password @Optional String password )  throws ConnectionException {
+    	helper = new Helper();
+        helper.setConnectionInfo(username, password, jenkinsURL);
+        
+        try {
+			helper.getJenkinsInfo();
+		} catch (JenkinsConnectorException e) {
+	        throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "", "Could not connect to Jenkins. Please check your configuration", e);
+		}
     }
 
     /**
@@ -74,7 +81,7 @@ public class JenkinsConnector
      */
     @ValidateConnection
     public boolean isConnected() {
-        return Helper.isConnected();
+        return helper != null && helper.isConnected();
     }
 
     /**
@@ -82,7 +89,7 @@ public class JenkinsConnector
      */
     @ConnectionIdentifier
     public String connectionId() {
-        return Helper.getUser();
+        return helper.getUrl();
     }
 
     /**
@@ -95,8 +102,7 @@ public class JenkinsConnector
      */
     @Processor
     public JenkinsInfo getJenkinsNodeInfo() throws JenkinsConnectorException {
-        return Helper.getJenkinsInfo();
-
+        return helper.getJenkinsInfo();
     }
 
     /**
@@ -111,7 +117,7 @@ public class JenkinsConnector
      */
     @Processor
     public JobInfo getJobInfo(String jobName) throws JenkinsConnectorException {
-        return Helper.getJenkinsJobInfo(jobName);
+        return helper.getJenkinsJobInfo(jobName);
 
     }
 
@@ -127,7 +133,7 @@ public class JenkinsConnector
      */
     @Processor
     public void buildWithParameters(String jobName, Map<String,String> params) throws JenkinsDeploymentException {
-        Helper.buildWithParameters(jobName, params);
+        helper.buildWithParameters(jobName, params);
     }
 
     /**
@@ -141,7 +147,7 @@ public class JenkinsConnector
      */
     @Processor
     public void build(String jobName) throws JenkinsDeploymentException {
-        Helper.build(jobName);
+        helper.build(jobName);
     }
 
     /**
@@ -155,7 +161,7 @@ public class JenkinsConnector
      */
     @Processor
     public JenkinsQueueInfo getQueueInfo() throws JenkinsConnectorException {
-        return Helper.getQueueInfo();
+        return helper.getQueueInfo();
 
     }
 
@@ -171,7 +177,7 @@ public class JenkinsConnector
      */
     @Processor
     public JobInfo createJob(String jobName) throws JenkinsConnectorException {
-        return Helper.createJob(jobName);
+        return helper.createJob(jobName);
 
     }
 
@@ -188,7 +194,7 @@ public class JenkinsConnector
      */
     @Processor
     public JobInfo copyJob(String newJobName, String fromJobName) throws JenkinsConnectorException {
-        return Helper.copyFromJob(newJobName, fromJobName);
+        return helper.copyFromJob(newJobName, fromJobName);
 
     }
 
@@ -204,7 +210,7 @@ public class JenkinsConnector
      */
     @Processor
     public void deleteJob(String jobName) throws JenkinsConnectorException {
-        Helper.delete(jobName);
+        helper.delete(jobName);
     }
 
     /**
@@ -218,7 +224,7 @@ public class JenkinsConnector
     */
     @Processor
     public void enableJob(String jobName) throws JenkinsConnectorException {
-        Helper.enableJob(jobName);
+        helper.enableJob(jobName);
     }
 
     /**
@@ -232,7 +238,7 @@ public class JenkinsConnector
      */
     @Processor
     public void disableJob(String jobName) throws JenkinsConnectorException {
-        Helper.disableJob(jobName);
+        helper.disableJob(jobName);
     }
 
     /**
@@ -248,7 +254,7 @@ public class JenkinsConnector
      */
     @Processor
     public BuildInfo getJobBuildInfo(String jobName, int buildNumber) throws JenkinsConnectorException {
-        return Helper.getJobBuildInfo(jobName, buildNumber);
+        return helper.getJobBuildInfo(jobName, buildNumber);
     }
 
     /**
@@ -264,6 +270,6 @@ public class JenkinsConnector
      */
     @Processor
     public String getJobBuildLog(String jobName, String buildNumber) throws JenkinsConnectorException {
-        return Helper.getJobBuildLog(jobName, buildNumber);
+        return helper.getJobBuildLog(jobName, buildNumber);
     }
 }
